@@ -1,0 +1,443 @@
+{
+  "algorithm": "RandomForestClassifier (scikit-learn) dalam Pipeline (SimpleImputer + OneHotEncoder + RandomForest)",
+  "dataset": {
+    "file": "parkinsons_disease_data.csv",
+    "n_rows": 2105,
+    "n_columns_raw": 35,
+    "target": "Diagnosis",
+    "class_distribution": {
+      "Tidak Terdiagnosis Parkinson": 801,
+      "Terdiagnosis Parkinson": 1304
+    },
+    "missing_values": 0,
+    "duplicate_rows": 0
+  },
+  "n_features_initial": 32,
+  "n_features_after_encoding": 53,
+  "feature_list": [
+    "Age",
+    "Gender",
+    "Ethnicity",
+    "EducationLevel",
+    "BMI",
+    "Smoking",
+    "AlcoholConsumption",
+    "PhysicalActivity",
+    "DietQuality",
+    "SleepQuality",
+    "FamilyHistoryParkinsons",
+    "TraumaticBrainInjury",
+    "Hypertension",
+    "Diabetes",
+    "Depression",
+    "Stroke",
+    "SystolicBP",
+    "DiastolicBP",
+    "CholesterolTotal",
+    "CholesterolLDL",
+    "CholesterolHDL",
+    "CholesterolTriglycerides",
+    "UPDRS",
+    "MoCA",
+    "FunctionalAssessment",
+    "Tremor",
+    "Rigidity",
+    "Bradykinesia",
+    "PosturalInstability",
+    "SpeechProblems",
+    "SleepDisorders",
+    "Constipation"
+  ],
+  "features_numeric": [
+    "Age",
+    "BMI",
+    "AlcoholConsumption",
+    "PhysicalActivity",
+    "DietQuality",
+    "SleepQuality",
+    "SystolicBP",
+    "DiastolicBP",
+    "CholesterolTotal",
+    "CholesterolLDL",
+    "CholesterolHDL",
+    "CholesterolTriglycerides",
+    "UPDRS",
+    "MoCA",
+    "FunctionalAssessment"
+  ],
+  "features_categorical": [
+    "Gender",
+    "Ethnicity",
+    "EducationLevel",
+    "Smoking",
+    "FamilyHistoryParkinsons",
+    "TraumaticBrainInjury",
+    "Hypertension",
+    "Diabetes",
+    "Depression",
+    "Stroke",
+    "Tremor",
+    "Rigidity",
+    "Bradykinesia",
+    "PosturalInstability",
+    "SpeechProblems",
+    "SleepDisorders",
+    "Constipation"
+  ],
+  "columns_dropped_from_features": [
+    "PatientID",
+    "DoctorInCharge"
+  ],
+  "columns_dropped_reason": {
+    "PatientID": "pengenal unik pasien, tidak bermakna klinis",
+    "DoctorInCharge": "kolom konstan (satu nilai)"
+  },
+  "preprocessing": {
+    "numeric": "SimpleImputer(strategy='median')",
+    "categorical": "SimpleImputer(strategy='most_frequent') + OneHotEncoder(handle_unknown='ignore')",
+    "scaling": "tidak dipakai (Random Forest tidak sensitif skala)",
+    "fit_only_on_training_data": true
+  },
+  "n_target_classes": 2,
+  "target_classes": {
+    "0": "Tidak Terdiagnosis Parkinson",
+    "1": "Terdiagnosis Parkinson"
+  },
+  "best_params": {
+    "n_estimators": 500,
+    "max_depth": 5
+  },
+  "random_state": 42,
+  "test_size": 0.2,
+  "evaluation_metrics_test": {
+    "accuracy": 0.9453681710213777,
+    "balanced_accuracy": 0.9317528735632183,
+    "precision_macro": 0.9535392664889069,
+    "recall_macro": 0.9317528735632183,
+    "f1_macro": 0.9407103975703692,
+    "precision_weighted": 0.9474260765465331,
+    "recall_weighted": 0.9453681710213777,
+    "f1_weighted": 0.9446971358631816
+  },
+  "per_class_test": {
+    "Tidak Terdiagnosis Parkinson": {
+      "precision": 0.9790209790209791,
+      "recall": 0.875,
+      "f1": 0.9240924092409241,
+      "support": 160
+    },
+    "Terdiagnosis Parkinson": {
+      "precision": 0.9280575539568345,
+      "recall": 0.9885057471264368,
+      "f1": 0.9573283858998145,
+      "support": 261
+    }
+  },
+  "confusion_matrix_test": {
+    "labels": [
+      0,
+      1
+    ],
+    "matrix": [
+      [
+        140,
+        20
+      ],
+      [
+        3,
+        258
+      ]
+    ]
+  },
+  "training_accuracy": 0.9441805225653207,
+  "baseline_majority_accuracy": 0.6194774346793349,
+  "top10_feature_importance": {
+    "UPDRS": 0.330865050411628,
+    "FunctionalAssessment": 0.0931338370783333,
+    "MoCA": 0.08503984152042968,
+    "Tremor_1": 0.07594476212085167,
+    "Tremor_0": 0.06874848209796426,
+    "Bradykinesia_1": 0.03035325063777578,
+    "Rigidity_1": 0.029685915854364073,
+    "Bradykinesia_0": 0.029675742519908895,
+    "Rigidity_0": 0.029136049240514203,
+    "PosturalInstability_1": 0.0205218438944054
+  },
+  "scenario_A_n_estimators": [
+    {
+      "n_estimators": 10,
+      "train_acc": 0.995843,
+      "test_acc": 0.904988,
+      "gap": 0.090855,
+      "test_bal_acc": 0.899186,
+      "test_macro_f1": 0.899186,
+      "min_class_recall": 0.875,
+      "test_log_loss": 0.473863,
+      "max_tree_depth": 19,
+      "avg_tree_depth": 17.1,
+      "avg_leaves": 208.6,
+      "fit_sec": 0.270703,
+      "delta_test_acc": null
+    },
+    {
+      "n_estimators": 25,
+      "train_acc": 0.998812,
+      "test_acc": 0.926366,
+      "gap": 0.072447,
+      "test_bal_acc": 0.916427,
+      "test_macro_f1": 0.920971,
+      "min_class_recall": 0.875,
+      "test_log_loss": 0.306394,
+      "max_tree_depth": 22,
+      "avg_tree_depth": 17.4,
+      "avg_leaves": 206.28,
+      "fit_sec": 0.20927,
+      "delta_test_acc": 0.021378
+    },
+    {
+      "n_estimators": 50,
+      "train_acc": 1.0,
+      "test_acc": 0.933492,
+      "gap": 0.066508,
+      "test_bal_acc": 0.925802,
+      "test_macro_f1": 0.928899,
+      "min_class_recall": 0.89375,
+      "test_log_loss": 0.300335,
+      "max_tree_depth": 22,
+      "avg_tree_depth": 17.42,
+      "avg_leaves": 205.46,
+      "fit_sec": 0.309926,
+      "delta_test_acc": 0.007126
+    },
+    {
+      "n_estimators": 100,
+      "train_acc": 1.0,
+      "test_acc": 0.938242,
+      "gap": 0.061758,
+      "test_bal_acc": 0.928424,
+      "test_macro_f1": 0.933628,
+      "min_class_recall": 0.8875,
+      "test_log_loss": 0.302317,
+      "max_tree_depth": 22,
+      "avg_tree_depth": 17.59,
+      "avg_leaves": 207.5,
+      "fit_sec": 0.405141,
+      "delta_test_acc": 0.004751
+    },
+    {
+      "n_estimators": 200,
+      "train_acc": 1.0,
+      "test_acc": 0.940618,
+      "gap": 0.059382,
+      "test_bal_acc": 0.932759,
+      "test_macro_f1": 0.936434,
+      "min_class_recall": 0.9,
+      "test_log_loss": 0.300823,
+      "max_tree_depth": 23,
+      "avg_tree_depth": 17.365,
+      "avg_leaves": 207.795,
+      "fit_sec": 0.595232,
+      "delta_test_acc": 0.002375
+    },
+    {
+      "n_estimators": 300,
+      "train_acc": 1.0,
+      "test_acc": 0.942993,
+      "gap": 0.057007,
+      "test_bal_acc": 0.935884,
+      "test_macro_f1": 0.939056,
+      "min_class_recall": 0.90625,
+      "test_log_loss": 0.303582,
+      "max_tree_depth": 25,
+      "avg_tree_depth": 17.316667,
+      "avg_leaves": 208.806667,
+      "fit_sec": 0.809957,
+      "delta_test_acc": 0.002375
+    },
+    {
+      "n_estimators": 500,
+      "train_acc": 1.0,
+      "test_acc": 0.942993,
+      "gap": 0.057007,
+      "test_bal_acc": 0.935884,
+      "test_macro_f1": 0.939056,
+      "min_class_recall": 0.90625,
+      "test_log_loss": 0.303013,
+      "max_tree_depth": 26,
+      "avg_tree_depth": 17.3,
+      "avg_leaves": 208.832,
+      "fit_sec": 1.320128,
+      "delta_test_acc": 0.0
+    }
+  ],
+  "scenario_B_max_depth": [
+    {
+      "max_depth": "3",
+      "train_acc": 0.799287,
+      "test_acc": 0.795724,
+      "gap": 0.003563,
+      "test_bal_acc": 0.732459,
+      "test_macro_f1": 0.74684,
+      "min_class_recall": 0.46875,
+      "test_log_loss": 0.493583,
+      "max_tree_depth": 3,
+      "avg_tree_depth": 3.0,
+      "avg_leaves": 7.92,
+      "fit_sec": 1.46888
+    },
+    {
+      "max_depth": "5",
+      "train_acc": 0.944181,
+      "test_acc": 0.945368,
+      "gap": -0.001188,
+      "test_bal_acc": 0.931753,
+      "test_macro_f1": 0.94071,
+      "min_class_recall": 0.875,
+      "test_log_loss": 0.418195,
+      "max_tree_depth": 5,
+      "avg_tree_depth": 5.0,
+      "avg_leaves": 27.368,
+      "fit_sec": 1.225543
+    },
+    {
+      "max_depth": "10",
+      "train_acc": 0.988717,
+      "test_acc": 0.940618,
+      "gap": 0.0481,
+      "test_bal_acc": 0.93034,
+      "test_macro_f1": 0.936095,
+      "min_class_recall": 0.8875,
+      "test_log_loss": 0.321268,
+      "max_tree_depth": 10,
+      "avg_tree_depth": 10.0,
+      "avg_leaves": 142.918,
+      "fit_sec": 2.294553
+    },
+    {
+      "max_depth": "20",
+      "train_acc": 1.0,
+      "test_acc": 0.942993,
+      "gap": 0.057007,
+      "test_bal_acc": 0.935884,
+      "test_macro_f1": 0.939056,
+      "min_class_recall": 0.90625,
+      "test_log_loss": 0.30336,
+      "max_tree_depth": 20,
+      "avg_tree_depth": 17.174,
+      "avg_leaves": 208.648,
+      "fit_sec": 1.860063
+    },
+    {
+      "max_depth": "None",
+      "train_acc": 1.0,
+      "test_acc": 0.942993,
+      "gap": 0.057007,
+      "test_bal_acc": 0.935884,
+      "test_macro_f1": 0.939056,
+      "min_class_recall": 0.90625,
+      "test_log_loss": 0.303013,
+      "max_tree_depth": 26,
+      "avg_tree_depth": 17.3,
+      "avg_leaves": 208.832,
+      "fit_sec": 1.361415
+    }
+  ],
+  "single_feature_diagnostic_top5": [
+    {
+      "fitur": "UPDRS",
+      "akurasi_fitur_tunggal": 0.776722
+    },
+    {
+      "fitur": "MoCA",
+      "akurasi_fitur_tunggal": 0.669834
+    },
+    {
+      "fitur": "FunctionalAssessment",
+      "akurasi_fitur_tunggal": 0.634204
+    },
+    {
+      "fitur": "CholesterolHDL",
+      "akurasi_fitur_tunggal": 0.627078
+    },
+    {
+      "fitur": "PhysicalActivity",
+      "akurasi_fitur_tunggal": 0.624703
+    }
+  ],
+  "sensitivity_analysis": [
+    {
+      "skenario": "Semua 32 fitur (model utama)",
+      "fitur_dibuang": 0,
+      "fitur_tersisa": 32,
+      "accuracy": 0.945368,
+      "balanced_acc": 0.931753,
+      "macro_f1": 0.94071,
+      "recall_kelas_terlemah": 0.875,
+      "selisih_vs_utama": 0.0
+    },
+    {
+      "skenario": "Tanpa UPDRS",
+      "fitur_dibuang": 1,
+      "fitur_tersisa": 31,
+      "accuracy": 0.828979,
+      "balanced_acc": 0.776209,
+      "macro_f1": 0.795189,
+      "recall_kelas_terlemah": 0.55625,
+      "selisih_vs_utama": -0.11639
+    },
+    {
+      "skenario": "Tanpa UPDRS, MoCA & FunctionalAssessment",
+      "fitur_dibuang": 3,
+      "fitur_tersisa": 29,
+      "accuracy": 0.726841,
+      "balanced_acc": 0.688997,
+      "macro_f1": 0.695014,
+      "recall_kelas_terlemah": 0.53125,
+      "selisih_vs_utama": -0.218527
+    },
+    {
+      "skenario": "Tanpa 4 gejala motorik kardinal",
+      "fitur_dibuang": 4,
+      "fitur_tersisa": 28,
+      "accuracy": 0.805226,
+      "balanced_acc": 0.766727,
+      "macro_f1": 0.779011,
+      "recall_kelas_terlemah": 0.60625,
+      "selisih_vs_utama": -0.140143
+    },
+    {
+      "skenario": "Tanpa seluruh skor & gejala klinis",
+      "fitur_dibuang": 10,
+      "fitur_tersisa": 22,
+      "accuracy": 0.617577,
+      "balanced_acc": 0.498084,
+      "macro_f1": 0.381791,
+      "recall_kelas_terlemah": 0.0,
+      "selisih_vs_utama": -0.327791
+    },
+    {
+      "skenario": "Tanpa semua fitur akurasi tunggal >= baseline+0.05",
+      "fitur_dibuang": 2,
+      "fitur_tersisa": 30,
+      "accuracy": 0.779097,
+      "balanced_acc": 0.719049,
+      "macro_f1": 0.731013,
+      "recall_kelas_terlemah": 0.46875,
+      "selisih_vs_utama": -0.166271
+    },
+    {
+      "skenario": "Hanya demografi & gaya hidup",
+      "fitur_dibuang": 20,
+      "fitur_tersisa": 12,
+      "accuracy": 0.619952,
+      "balanced_acc": 0.502419,
+      "macro_f1": 0.394201,
+      "recall_kelas_terlemah": 0.0125,
+      "selisih_vs_utama": -0.325416
+    }
+  ],
+  "leakage_note": "Fitur pemeriksaan klinis (UPDRS, MoCA, FunctionalAssessment, gejala) berpotensi dekat dengan proses diagnosis dan waktu pengukurannya tidak diketahui. Akurasi model utama 0.9454; tanpa UPDRS 0.8290; tanpa seluruh skor dan gejala klinis 0.6176; hanya demografi dan gaya hidup 0.6200 (baseline 0.6195). Lihat notebook bagian 8.2, 9.1, 14.1.",
+  "disclaimer": "Alat bantu penelitian dan edukasi; bukan pengganti diagnosis atau keputusan dokter.",
+  "sklearn_version": "1.7.2",
+  "training_date": "2026-11-22T02:15:48"
+}

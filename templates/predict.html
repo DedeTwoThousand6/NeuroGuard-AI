@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}Prediksi Parkinson — NeuroGuard AI{% endblock %}
+
+{% block content %}
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
+    <div class="spinner"></div>
+    <h2>Menganalisis data klinis…</h2>
+    <p class="loading-sub">Random Forest sedang memproses 32 fitur neurologis</p>
+</div>
+
+<div class="layout">
+
+    <!-- ============ PANEL KIRI ============ -->
+    <aside class="side">
+
+        <section class="card3d mini-hero reveal" data-tilt>
+            <div class="algo-chip">
+                <i class="fa-solid fa-shield-halved"></i>
+                Random Forest · {{ n_estimators }} pohon · depth={{ max_depth }}
+            </div>
+
+            <div class="mini-lottie">
+                <dotlottie-wc
+                    src="https://lottie.host/7f864593-a8d0-48fc-8c53-b8c8e4b41380/K4GUOI4zy3.lottie"
+                    autoplay loop>
+                </dotlottie-wc>
+            </div>
+
+            <h1>NeuroGuard <em>AI</em></h1>
+            <p>Deteksi dini <strong>penyakit Parkinson</strong> dari data klinis &amp; neurologis.</p>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-number">{{ '%.1f%%' % (accuracy * 100) }}</div>
+                    <div class="stat-label">Akurasi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">32</div>
+                    <div class="stat-label">Fitur</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Kelas</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card3d importance-section">
+            <p class="detail-title"><i class="fa-solid fa-chart-simple"></i> Fitur penting model</p>
+            {% for f in importance %}
+            <div class="prob-row">
+                <span class="imp-name">{{ f.name }}</span>
+                <div class="bar"><div class="bar-fill i" style="width: {{ f.rel }}%"></div></div>
+                <span class="prob-val">{{ f.value }}%</span>
+            </div>
+            {% endfor %}
+            <p class="muted small" style="margin-top: 0.6rem;">
+                Top {{ importance|length }} fitur dari 32 total.
+            </p>
+        </section>
+
+        <section class="card3d info-box">
+            <p class="detail-title"><i class="fa-solid fa-circle-info"></i> Kelas Diagnosis</p>
+            <ul class="legend">
+                <li><span class="dot healthy"></span> Tidak Terdiagnosis Parkinson</li>
+                <li><span class="dot positive"></span> Terdiagnosis Parkinson</li>
+            </ul>
+            <p class="disclaimer">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Bukan alat diagnosis medis.
+            </p>
+        </section>
+
+    </aside>
+
+    <!-- ============ PANEL KANAN ============ -->
+    <main class="work" id="rightPanel">
+
+        {% if errors %}
+        <div class="error-section" id="hasil">
+            <h2><i class="fa-solid fa-circle-exclamation"></i> Input belum valid</h2>
+            <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
+
+        {% if result %}
+        <section class="card3d result-section {{ result.css }}" id="hasil">
+            <div class="result-head">
+                <div>
+                    <div class="result-kicker">Hasil prediksi</div>
+                    <div class="result-label">
+                        <i class="fa-solid {{ result.icon }}"></i>
+                        {{ result.label }}
+                    </div>
+                    <p class="result-note">
+                        {% if result.css == 'healthy' %}
+                            Profil data klinis menunjukkan tidak terdeteksi tanda-tanda Parkinson.
+                            Tetap jaga gaya hidup aktif dan lakukan pemeriksaan kesehatan rutin.
+                        {% else %}
+                            Terdeteksi indikasi penyakit Parkinson berdasarkan data klinis. Segera
+                            konsultasikan dengan dokter spesialis neurologi untuk evaluasi lebih lanjut.
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="gauge-wrap">
+                    <div class="gauge" style="--p: {{ result.top_prob }}">
+                        <span>{{ result.top_prob }}%</span>
+                    </div>
+                    <div class="gauge-caption">Keyakinan model</div>
+                </div>
+            </div>
+
+            <p class="detail-title" style="margin-top: 1rem;">
+                <i class="fa-solid fa-chart-pie"></i> Probabilitas per kelas
+            </p>
+            <div class="probs">
+                {% set class_css_map = {
+                    'Tidak Terdiagnosis Parkinson': 'healthy',
+                    'Terdiagnosis Parkinson':       'positive'
+                } %}
+                {% for cls, prob in result.probs.items() %}
+                <div class="prob-row">
+                    <span class="prob-label">
+                        <span class="dot {{ class_css_map.get(cls, 'positive') }}"></span>
+                        {{ cls }}
+                    </span>
+                    <div class="bar">
+                        <div class="bar-fill {{ class_css_map.get(cls, 'positive') }}-fill"
+                             style="width: {{ prob }}%"></div>
+                    </div>
+                    <span class="prob-val">{{ prob }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ============ FORM ============ -->
+        <section class="card3d form-panel">
+
+            <div class="card-head">
+                <div>
+                    <h2><i class="fa-solid fa-flask-vial"></i> Input data klinis pasien</h2>
+                    <p class="muted small">
+                        Angka abu-abu adalah nilai referensi median. Arahkan kursor ke kolom untuk melihat rentang.
+                    </p>
+                </div>
+                {% if examples %}
+                <div class="actions">
+                    <span class="muted small">Contoh:</span>
+                    <button type="button" class="btn-chip" data-example="sehat">
+                        <i class="fa-solid fa-brain" style="color: var(--healthy);"></i>Tidak Positif
+                    </button>
+                    <button type="button" class="btn-chip" data-example="positif">
+                        <i class="fa-solid fa-circle-xmark" style="color: var(--positive);"></i>Positif
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{{ url_for('predict_form') }}" id="form-prediksi" novalidate>
+
+                {% for group_name, fields in form_groups %}
+                <div class="field-group">
+                    <div class="group-title">
+                        {% if group_name == 'Demografi' %}<i class="fa-solid fa-user"></i>
+                        {% elif group_name == 'Gaya Hidup' %}<i class="fa-solid fa-person-walking"></i>
+                        {% elif group_name == 'Riwayat' %}<i class="fa-solid fa-clipboard-list"></i>
+                        {% elif group_name == 'Kardiovaskular' %}<i class="fa-solid fa-heart"></i>
+                        {% elif group_name == 'Klinis' %}<i class="fa-solid fa-stethoscope"></i>
+                        {% elif group_name == 'Gejala' %}<i class="fa-solid fa-hand-holding-medical"></i>
+                        {% elif group_name == 'Non-Motorik' %}<i class="fa-solid fa-brain"></i>
+                        {% endif %}
+                        {{ group_name }}
+                    </div>
+
+                    <div class="fields-grid">
+                        {% for f in fields %}
+                        <div class="field-item">
+                            <label for="{{ f.name }}">
+                                {{ f.label }}
+                                {% if f.unit %}<span class="field-unit">{{ f.unit }}</span>{% endif %}
+                            </label>
+                            {% if f.ftype == 'categorical' %}
+                            <select id="{{ f.name }}" name="{{ f.name }}">
+                                <option value="">— pilih —</option>
+                                {% for ch in f.choices %}
+                                <option value="{{ ch.val }}"
+                                    {{ 'selected' if form.get(f.name) == ch.val else '' }}>{{ ch.label }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <input type="text" inputmode="decimal" autocomplete="off"
+                                   id="{{ f.name }}" name="{{ f.name }}"
+                                   value="{{ form.get(f.name, '') }}"
+                                   placeholder="{{ f.median }}"
+                                   title="{{ f.name }} | rentang: {{ f.min }} – {{ f.max }}">
+                            {% endif %}
+                            <div class="field-hint">{{ f.hint }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Prediksi Parkinson
+                    </button>
+                    <button type="button" class="btn btn-ghost" id="btn-prediksi-ulang"
+                        onclick="window.location.href='{{ url_for('predict_page') }}'">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Reset
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+    </main>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const EXAMPLES = {{ examples|tojson }};
+    const form = document.getElementById('form-prediksi');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    document.querySelectorAll('[data-example]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const data = EXAMPLES[btn.dataset.example] || {};
+            Object.entries(data).forEach(([name, val]) => {
+                const el = form.elements[name];
+                if (el) el.value = val;
+            });
+        });
+    });
+
+    form.addEventListener('submit', () => loadingOverlay.classList.add('active'));
+
+    const hasil = document.getElementById('hasil');
+    if (hasil) {
+        setTimeout(() => hasil.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+</script>
+{% endblock %}

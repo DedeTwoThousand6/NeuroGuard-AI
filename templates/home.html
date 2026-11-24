@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}NeuroGuard AI — Deteksi Dini Parkinson{% endblock %}
+
+{% block content %}
+<main>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="home">
+        <div class="hero-grid">
+
+            <!-- Kiri: judul & CTA -->
+            <div class="hero-left">
+                <span class="badge"><b>AI</b> Machine Learning</span>
+                <h1 class="display">Deteksi Dini <em>Parkinson</em> dengan AI</h1>
+                <p class="lead">
+                    Isi data klinis pasien, dan model Random Forest akan memperkirakan
+                    kemungkinan Parkinson beserta tingkat keyakinannya.
+                </p>
+                <div class="hero-cta">
+                    <a class="cta-pill" href="{{ url_for('predict_page') }}">
+                        Mulai Prediksi
+                        <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                    <a class="link-soft" href="#tentang">Pelajari <i class="fa-solid fa-arrow-down"></i></a>
+                </div>
+                <div class="trust">
+                    <div class="trust-icons" aria-hidden="true">
+                        <i class="fa-solid fa-brain"></i>
+                        <i class="fa-solid fa-tree"></i>
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                    <p><b>{{ '%.1f%%' % (accuracy * 100) }} akurasi</b> pada data uji<br>32 fitur klinis &amp; neurologis</p>
+                </div>
+            </div>
+
+            <!-- Tengah: otak Lottie -->
+            <div class="brain-stage" aria-hidden="true">
+                <dotlottie-wc
+                    src="https://lottie.host/7f864593-a8d0-48fc-8c53-b8c8e4b41380/K4GUOI4zy3.lottie"
+                    autoplay loop>
+                </dotlottie-wc>
+            </div>
+
+            <!-- Kanan: kartu info melayang -->
+            <div class="hero-right">
+                <div class="float-card">
+                    <div class="fc-head">
+                        <div class="fc-icon"><i class="fa-solid fa-tree"></i></div>
+                        <div>
+                            <div class="fc-label">Algoritma yang dipakai</div>
+                            <div class="fc-title">Random Forest · {{ n_estimators }} pohon</div>
+                        </div>
+                    </div>
+                    <ul class="fc-list">
+                        <li>32 fitur klinis &amp; neurologis</li>
+                        <li>Skor UPDRS &amp; MoCA</li>
+                        <li>Probabilitas tiap kelas</li>
+                        <li>Fitur paling berpengaruh</li>
+                    </ul>
+                </div>
+
+                <div class="float-card metric delay">
+                    <span class="fc-label">Akurasi model</span>
+                    <span class="metric-val">{{ '%.1f%%' % (accuracy * 100) }}</span>
+                    <span class="metric-sub"><i class="fa-solid fa-circle-check"></i> Diuji pada data uji</span>
+                </div>
+
+                <div class="big-claim">Satu form.<br>Hasil dalam detik.</div>
+            </div>
+
+        </div>
+
+        <p class="strip-title">Dibangun dengan</p>
+        <div class="strip">
+            <div><i class="fa-solid fa-tree"></i> Random Forest</div>
+            <div><i class="fa-solid fa-table-list"></i> 32 Fitur</div>
+            <div><i class="fa-solid fa-seedling"></i> {{ n_estimators }} Pohon</div>
+            <div><i class="fa-solid fa-chart-pie"></i> Probabilitas</div>
+            <div><i class="fa-solid fa-flask-vial"></i> UPDRS &amp; MoCA</div>
+        </div>
+    </section>
+
+    <!-- ================= SEKILAS ================= -->
+    <section class="section" id="tentang">
+        <div class="section-head reveal">
+            <span class="eyebrow">Sekilas</span>
+            <h2>Mudah dipahami, dalam tiga poin</h2>
+            <p>Penjelasan singkat tentang aplikasi, algoritma, dan penyakit yang dideteksi.</p>
+        </div>
+
+        <div class="grid-3">
+            <article class="card3d about-card reveal">
+                <div class="about-icon"><i class="fa-solid fa-laptop-medical"></i></div>
+                <h3>Tentang aplikasi</h3>
+                <p>NeuroGuard AI membantu memperkirakan kemungkinan seseorang terdiagnosis Parkinson dari data klinis. Hasilnya berupa kelas diagnosis dan persentase keyakinan model.</p>
+                <div class="tag-row"><span class="tag">32 fitur</span><span class="tag">2 kelas</span></div>
+            </article>
+
+            <article class="card3d about-card reveal" id="algoritma" style="transition-delay:.08s">
+                <div class="about-icon accent"><i class="fa-solid fa-tree"></i></div>
+                <h3>Algoritma Random Forest</h3>
+                <p>Bayangkan {{ n_estimators }} "dokter" (pohon keputusan) yang menilai data yang sama. Suara terbanyak menjadi hasil akhir, sehingga lebih stabil daripada satu pohon saja.</p>
+                <div class="tag-row"><span class="tag">{{ n_estimators }} pohon</span><span class="tag">depth {{ max_depth }}</span><span class="tag">{{ '%.1f%%' % (accuracy * 100) }} akurasi</span></div>
+            </article>
+
+            <article class="card3d about-card reveal" id="parkinson" style="transition-delay:.16s">
+                <div class="about-icon soft"><i class="fa-solid fa-brain"></i></div>
+                <h3>Penyakit Parkinson</h3>
+                <p>Gangguan saraf progresif akibat berkurangnya dopamin di otak. Gejala utamanya tremor, otot kaku, gerakan melambat, dan keseimbangan terganggu.</p>
+                <div class="tag-row"><span class="tag">Tremor</span><span class="tag">Rigiditas</span><span class="tag">Bradikinesia</span></div>
+            </article>
+        </div>
+
+        <div class="steps">
+            <div class="card3d step reveal"><div class="step-num">1</div><div><b>Isi data klinis</b><span>Lengkapi form pasien</span></div></div>
+            <div class="card3d step reveal" style="transition-delay:.08s"><div class="step-num">2</div><div><b>Model menganalisis</b><span>Random Forest memproses data</span></div></div>
+            <div class="card3d step reveal" style="transition-delay:.16s"><div class="step-num">3</div><div><b>Lihat hasilnya</b><span>Kelas &amp; probabilitas</span></div></div>
+        </div>
+
+        <div class="cta-band reveal">
+            <div>
+                <h2>Siap mencoba prediksi?</h2>
+                <p>Gunakan contoh data atau isi sendiri. Hasil muncul dalam hitungan detik.</p>
+            </div>
+            <a class="cta-pill" href="{{ url_for('predict_page') }}">
+                Buka halaman prediksi
+                <span class="cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+        </div>
+
+        <p class="disclaimer-banner">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            NeuroGuard AI bukan alat diagnosis medis. Konsultasikan hasilnya dengan dokter spesialis neurologi.
+        </p>
+    </section>
+
+</main>
+{% endblock %}

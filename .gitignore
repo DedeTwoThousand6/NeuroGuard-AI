@@ -1,0 +1,32 @@
+
+# Virtual Environment
+venv/
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment Variables
+.env
+
+# Python Build Files
+*.egg-info/
+dist/
+build/
+
+# Model Files
+*.pkl
+!model/random_forest_parkinsons.pkl
+
+# Folder yang tidak diupload ke GitHub
+/referensi jurnal/
+/hasil_gambar_parkinson/
+
+# File yang tidak diupload
+/generate_figures.py
+
+# System Files
+.DS_Store
+Thumbs.db

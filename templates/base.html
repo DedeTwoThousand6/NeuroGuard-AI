@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NeuroGuard AI — Prediksi Penyakit Parkinson{% endblock %}</title>
+    <meta name="description" content="Prediksi penyakit Parkinson berbasis Random Forest Machine Learning.">
+    <meta name="theme-color" content="#f6f5f1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Percepat muat animasi Lottie -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://lottie.host" crossorigin>
+    <link rel="modulepreload" href="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js">
+    <link rel="preload" href="https://lottie.host/7f864593-a8d0-48fc-8c53-b8c8e4b41380/K4GUOI4zy3.lottie" as="fetch" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>document.documentElement.classList.add('js');</script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+</head>
+
+<body>
+
+    <header class="nav-wrap">
+        <nav class="nav" aria-label="Navigasi utama">
+            <a class="brand" href="{{ url_for('home') }}">
+                <span class="brand-mark"><i class="fa-solid fa-brain"></i></span>
+                NeuroGuard <em>AI</em>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a id="navHome" href="{{ url_for('home') }}" class="{{ 'active' if active == 'home' else '' }}">Home</a></li>
+                <li><a id="navAbout" href="{{ url_for('home') }}#tentang">About</a></li>
+                <li><a href="{{ url_for('predict_page') }}" class="{{ 'active' if active == 'predict' else '' }}">Prediction</a></li>
+            </ul>
+            {% if active != 'predict' %}
+            <a class="btn btn-primary btn-sm nav-cta" href="{{ url_for('predict_page') }}">Mulai Prediksi</a>
+            {% endif %}
+            <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <div class="page-footer">
+        NeuroGuard AI &nbsp;·&nbsp; Prediksi Penyakit Parkinson &nbsp;·&nbsp;
+        Random Forest &nbsp;·&nbsp; Bukan pengganti diagnosis medis
+    </div>
+
+    <script>
+        // Menu mobile
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', open);
+        });
+        navLinks.addEventListener('click', e => { if (e.target.closest('a')) navLinks.classList.remove('open'); });
+
+        // Menu aktif berpindah Home <-> About saat klik / scroll (khusus halaman Home)
+        const aboutSection = document.getElementById('tentang');
+        const navHome = document.getElementById('navHome');
+        const navAbout = document.getElementById('navAbout');
+        if (aboutSection && navHome && navAbout) {
+            let lock = false, lockTimer;
+
+            const setActive = (atAbout) => {
+                navAbout.classList.toggle('active', atAbout);
+                navHome.classList.toggle('active', !atAbout);
+            };
+            const syncActive = () => {
+                if (lock) return;
+                setActive(aboutSection.getBoundingClientRect().top <= window.innerHeight * 0.4);
+            };
+            // Saat scroll halus berjalan, jangan biarkan posisi scroll menimpa pilihan klik
+            const lockFor = (ms) => {
+                lock = true;
+                clearTimeout(lockTimer);
+                lockTimer = setTimeout(() => { lock = false; syncActive(); }, ms);
+            };
+            window.addEventListener('scrollend', () => {
+                if (lock) { clearTimeout(lockTimer); lock = false; syncActive(); }
+            });
+
+            // Klik About / "Pelajari": sorotan pindah seketika
+            document.querySelectorAll('a[href$="#tentang"]').forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    setActive(true);
+                    lockFor(1000);
+                    aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.replaceState(null, '', '#tentang');
+                });
+            });
+            // Klik Home: sorotan pindah seketika
+            navHome.addEventListener('click', e => {
+                e.preventDefault();
+                setActive(false);
+                lockFor(1000);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                history.replaceState(null, '', location.pathname);
+            });
+
+            window.addEventListener('scroll', syncActive, { passive: true });
+            window.addEventListener('load', syncActive);
+            syncActive();
+        }
+
+        // Animasi Lottie: tampil dengan fade-in begitu siap (tidak muncul tiba-tiba)
+        document.querySelectorAll('.brain-stage, .mini-lottie').forEach(box => {
+            const el = box.querySelector('dotlottie-wc');
+            const show = () => box.classList.add('is-ready');
+            if (!el) { show(); return; }
+            const fallback = setTimeout(show, 3500);
+            const done = () => { clearTimeout(fallback); show(); };
+            ['ready', 'load', 'play'].forEach(ev => el.addEventListener(ev, done, { once: true }));
+            customElements.whenDefined('dotlottie-wc').then(() => {
+                const attach = () => {
+                    const dl = el.dotLottie;
+                    if (dl && dl.addEventListener) {
+                        ['ready', 'load', 'play'].forEach(ev => dl.addEventListener(ev, done));
+                        return true;
+                    }
+                    return false;
+                };
+                if (!attach()) {
+                    let n = 0;
+                    const t = setInterval(() => { if (attach() || ++n > 40) clearInterval(t); }, 100);
+                }
+            });
+        });
+
+        // Muncul saat scroll
+        const reveals = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(en => {
+                    if (en.isIntersecting) {
+                        const t = en.target;
+                        t.classList.add('in');
+                        io.unobserve(t);
+                        // Setelah animasi muncul selesai: hapus jeda & pakai transisi cepat (efek tekan)
+                        setTimeout(() => { t.style.transitionDelay = '0s'; t.classList.add('done'); }, 1000);
+                    }
+                });
+            }, { threshold: 0.12 });
+            reveals.forEach(el => io.observe(el));
+        } else {
+            reveals.forEach(el => el.classList.add('in'));
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
